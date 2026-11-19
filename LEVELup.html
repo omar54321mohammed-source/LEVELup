@@ -2381,6 +2381,7 @@ let sbUser = null;
 let sbSyncTimer = null;
 let sbLoadingRemote = false;
 const SB_URL_STORAGE = "levelup_supabase_url";
+const SB_PROJECT_URL = "https://xrfuvzzsgcsefdmnlprq.supabase.co";
 const SB_KEY_STORAGE = "levelup_supabase_publishable_key";
 
 function cloudStatus(message) {
@@ -2390,8 +2391,9 @@ function cloudStatus(message) {
 function openCloudPanel() {
   const panel = document.getElementById("cloudAccessPanel");
   if (panel) panel.classList.add("open");
-  const url = localStorage.getItem(SB_URL_STORAGE) || "";
+  const url = SB_PROJECT_URL;
   const key = localStorage.getItem(SB_KEY_STORAGE) || "";
+  localStorage.setItem(SB_URL_STORAGE, SB_PROJECT_URL);
   document.getElementById("cloudProjectUrl").value = url;
   document.getElementById("cloudPublishableKey").value = key;
   refreshCloudAccountUI();
@@ -2407,8 +2409,9 @@ function refreshCloudAccountUI() {
   document.getElementById("cloudAccessBtn").textContent = signed ? "☁️ Logged In" : "☁️ Log In";
 }
 function saveCloudSettings() {
-  const url = document.getElementById("cloudProjectUrl").value.trim().replace(/\/$/, "");
+  const url = SB_PROJECT_URL;
   const key = document.getElementById("cloudPublishableKey").value.trim();
+  document.getElementById("cloudProjectUrl").value = SB_PROJECT_URL;
   if (!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)) {
     cloudStatus("تحقق من Project URL؛ يجب أن يبدأ بـ https:// وينتهي بـ .supabase.co"); return;
   }
@@ -2421,7 +2424,8 @@ function saveCloudSettings() {
   initializeSupabase(true);
 }
 async function initializeSupabase(showMessage=false) {
-  const url = localStorage.getItem(SB_URL_STORAGE);
+  const url = SB_PROJECT_URL;
+  localStorage.setItem(SB_URL_STORAGE, SB_PROJECT_URL);
   const key = localStorage.getItem(SB_KEY_STORAGE);
   if (!url || !key) { if (showMessage) cloudStatus("أدخل Project URL وPublishable key أولًا."); return; }
   if (!window.supabase || !window.supabase.createClient) {
